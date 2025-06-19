@@ -60,19 +60,27 @@
           <div class="control-panel">
             <h3>Note Scheduling</h3>
             <p>Schedule individual notes with custom start times (relative to audio context time)</p>
-            
-            <div class="note-controls">
+              <div class="note-controls">
                 <label>Note:</label>
                 <input type="number" id="note-pitch" min="0" max="127" value="60" title="MIDI note number (0-127)">
                 <label>Velocity:</label>
                 <input type="number" id="note-velocity" min="0" max="127" value="100" title="MIDI velocity (0-127)">
+                <label>Duration (ms):</label>
+                <input type="number" id="note-duration" min="50" max="5000" value="500" step="50" title="Note duration in milliseconds">
                 <label>Start Time (ms):</label>
                 <input type="number" id="note-start-time" min="0" step="1" value="0" title="Start time in milliseconds from now">
                 <button class="schedule-btn" id="schedule-note">Schedule Note</button>
-            </div>
-            
-            <div class="note-controls">
+            </div>            <div class="note-controls">
                 <button class="schedule-btn" id="play-sequence">Play Sample Sequence</button>
+                <label>Sequence Note Duration (ms):</label>
+                <input type="number" id="sequence-note-duration" min="50" max="2000" value="200" step="50" title="Duration for sequence notes">
+                <label>Sequence Subdivision:</label>
+                <select id="simple-sequence-subdivision" title="Simple sequence subdivision timing">
+                    <option value="4" selected>Quarter Notes (1/4)</option>
+                    <option value="8">Eighth Notes (1/8)</option>
+                    <option value="16">Sixteenth Notes (1/16)</option>
+                    <option value="2">Half Notes (1/2)</option>
+                </select>
                 <button class="stop-btn" id="stop-all">Stop All Notes</button>
                 <button class="schedule-btn" id="clear-scheduled">Clear Scheduled Notes</button>
             </div>
@@ -80,6 +88,44 @@
             <div id="scheduled-notes">
                 <h4>Scheduled Notes:</h4>
                 <div id="notes-list"></div>
+            </div>
+        </div>
+        
+        <div class="control-panel">
+            <h3>Precision Sequencer</h3>
+            <p>High-precision sequencer using Web Worker timing (based on Chris Wilson's "A Tale of Two Clocks")</p>            <div class="note-controls">
+                <label>Tempo (BPM):</label>
+                <input type="number" id="sequencer-tempo" min="60" max="200" value="120" title="Beats per minute">
+                <label>Lookahead (ms):</label>
+                <input type="number" id="sequencer-lookahead" min="10" max="100" value="25" step="5" title="Scheduling lookahead time">
+                <label>Note Duration (ms):</label>
+                <input type="number" id="sequencer-note-duration" min="50" max="2000" value="200" step="50" title="Sequencer note duration">
+            </div>
+            
+            <div class="note-controls">
+                <label>Subdivision:</label>
+                <select id="sequence-subdivision" title="Note subdivision timing">
+                    <option value="1">Whole Notes (1/1)</option>
+                    <option value="2">Half Notes (1/2)</option>
+                    <option value="4" selected>Quarter Notes (1/4)</option>
+                    <option value="8">Eighth Notes (1/8)</option>
+                    <option value="16">Sixteenth Notes (1/16)</option>
+                    <option value="32">Thirty-Second Notes (1/32)</option>
+                </select>
+                <label>Sequence Pattern:</label>
+                <select id="sequence-pattern">
+                    <option value="major">C Major Scale</option>
+                    <option value="minor">C Minor Scale</option>
+                    <option value="chromatic">Chromatic</option>
+                    <option value="pentatonic">Pentatonic</option>
+                    <option value="arpeggios">C Major Arpeggio</option>
+                </select>
+            </div>
+            
+            <div id="sequencer-info">
+                <h4>Sequencer Status:</h4>
+                <div id="sequencer-status">Stopped</div>
+                <div id="timing-stats"></div>
             </div>
         </div>
     </main>
