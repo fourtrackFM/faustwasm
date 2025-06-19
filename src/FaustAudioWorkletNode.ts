@@ -266,8 +266,49 @@ export class FaustAudioWorkletNode<
     const e = { type: "keyOn", data: [channel, pitch, velocity] };
     this.port.postMessage(e);
   }
+
+  /**
+   * Schedule a keyOn event at a specific time
+   * @param channel MIDI channel
+   * @param pitch MIDI pitch
+   * @param velocity MIDI velocity
+   * @param startTime Absolute start time in AudioContext time (seconds)
+   */
+  keyOnScheduled(
+    channel: number,
+    pitch: number,
+    velocity: number,
+    startTime: number
+  ) {
+    const e = {
+      type: "keyOnScheduled",
+      data: [channel, pitch, velocity, startTime],
+    };
+    this.port.postMessage(e);
+  }
+
   keyOff(channel: number, pitch: number, velocity: number) {
     const e = { type: "keyOff", data: [channel, pitch, velocity] };
+    this.port.postMessage(e);
+  }
+
+  /**
+   * Schedule a keyOff event at a specific time
+   * @param channel MIDI channel
+   * @param pitch MIDI pitch
+   * @param velocity MIDI velocity
+   * @param startTime Absolute start time in AudioContext time (seconds)
+   */
+  keyOffScheduled(
+    channel: number,
+    pitch: number,
+    velocity: number,
+    startTime: number
+  ) {
+    const e = {
+      type: "keyOffScheduled",
+      data: [channel, pitch, velocity, startTime],
+    };
     this.port.postMessage(e);
   }
 
@@ -408,8 +449,48 @@ export class FaustPolyAudioWorkletNode
     this.port.postMessage(e);
   }
 
+  /**
+   * Schedule a keyOn event at a specific time
+   * @param channel MIDI channel
+   * @param pitch MIDI pitch
+   * @param velocity MIDI velocity
+   * @param startTime Absolute start time in AudioContext time (seconds)
+   */
+  keyOnScheduled(
+    channel: number,
+    pitch: number,
+    velocity: number,
+    startTime: number
+  ) {
+    const e = {
+      type: "keyOnScheduled",
+      data: [channel, pitch, velocity, startTime],
+    };
+    this.port.postMessage(e);
+  }
+
   keyOff(channel: number, pitch: number, velocity: number) {
     const e = { type: "keyOff", data: [channel, pitch, velocity] };
+    this.port.postMessage(e);
+  }
+
+  /**
+   * Schedule a keyOff event at a specific time
+   * @param channel MIDI channel
+   * @param pitch MIDI pitch
+   * @param velocity MIDI velocity
+   * @param startTime Absolute start time in AudioContext time (seconds)
+   */
+  keyOffScheduled(
+    channel: number,
+    pitch: number,
+    velocity: number,
+    startTime: number
+  ) {
+    const e = {
+      type: "keyOffScheduled",
+      data: [channel, pitch, velocity, startTime],
+    };
     this.port.postMessage(e);
   }
 

@@ -3,13 +3,85 @@
 
 <head>
     <title>Faust DSP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .control-panel {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .note-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #button-dsp {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+        .schedule-btn {
+            background-color: #008CBA;
+            color: white;
+        }
+        .stop-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        h3 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 
 <body>
     <main>
-        <span id="dsp-switch">
+        <div id="dsp-switch">
             <center><button id="button-dsp">Activate DSP</button></center>
-        </span>
+        </div>
+          <div class="control-panel">
+            <h3>Note Scheduling</h3>
+            <p>Schedule individual notes with custom start times (relative to audio context time)</p>
+            
+            <div class="note-controls">
+                <label>Note:</label>
+                <input type="number" id="note-pitch" min="0" max="127" value="60" title="MIDI note number (0-127)">
+                <label>Velocity:</label>
+                <input type="number" id="note-velocity" min="0" max="127" value="100" title="MIDI velocity (0-127)">
+                <label>Start Time (ms):</label>
+                <input type="number" id="note-start-time" min="0" step="1" value="0" title="Start time in milliseconds from now">
+                <button class="schedule-btn" id="schedule-note">Schedule Note</button>
+            </div>
+            
+            <div class="note-controls">
+                <button class="schedule-btn" id="play-sequence">Play Sample Sequence</button>
+                <button class="stop-btn" id="stop-all">Stop All Notes</button>
+                <button class="schedule-btn" id="clear-scheduled">Clear Scheduled Notes</button>
+            </div>
+            
+            <div id="scheduled-notes">
+                <h4>Scheduled Notes:</h4>
+                <div id="notes-list"></div>
+            </div>
+        </div>
     </main>
     <script src="./index-template.js"></script>
 </body>

@@ -153,6 +153,12 @@ const getFaustAudioWorkletProcessor = <Poly extends boolean = false>(
     protected startTime: number;
     // Flag to track if processing has started
     protected processingStarted: boolean = false;
+    // Scheduled events queue
+    protected scheduledEvents: Array<{
+      type: string;
+      data: any[];
+      time: number;
+    }> = [];
 
     constructor(options: FaustAudioWorkletNodeOptions<Poly>) {
       super(options);
@@ -221,14 +227,29 @@ const getFaustAudioWorkletProcessor = <Poly extends boolean = false>(
           }
         }
         return true;
-      }
-
-      // Mark that processing has started
+      } // Mark that processing has started
       if (!this.processingStarted) {
         this.processingStarted = true;
         // Notify the main thread that processing has started
         this.port.postMessage({ type: "processingStarted", time: currentTime });
       }
+
+      // Process scheduled events
+      this.scheduledEvents = this.scheduledEvents.filter((event) => {
+        if (currentTime >= event.time) {
+          // Execute the event
+          switch (event.type) {
+            case "keyOn":
+              this.keyOn(event.data[0], event.data[1], event.data[2]);
+              break;
+            case "keyOff":
+              this.keyOff(event.data[0], event.data[1], event.data[2]);
+              break;
+          }
+          return false; // Remove from queue
+        }
+        return true; // Keep in queue
+      });
 
       // Update controls (possibly needed for sample accurate control)
       for (const path in parameters) {
@@ -282,6 +303,22 @@ const getFaustAudioWorkletProcessor = <Poly extends boolean = false>(
         }
         case "keyOff": {
           this.keyOff(msg.data[0], msg.data[1], msg.data[2]);
+          break;
+        }
+        case "keyOnScheduled": {
+          this.scheduledEvents.push({
+            type: "keyOn",
+            data: [msg.data[0], msg.data[1], msg.data[2]],
+            time: msg.data[3],
+          });
+          break;
+        }
+        case "keyOffScheduled": {
+          this.scheduledEvents.push({
+            type: "keyOff",
+            data: [msg.data[0], msg.data[1], msg.data[2]],
+            time: msg.data[3],
+          });
           break;
         }
         // Generic data message
@@ -466,7 +503,6 @@ const getFaustAudioWorkletProcessor = <Poly extends boolean = false>(
       else if (cmd === 9) this.keyOn(channel, data1, data2);
       else super.midiMessage(data);
     }
-
     protected handleMessageAux = (e: MessageEvent) => {
       // use arrow function for binding
       const msg = e.data;
@@ -476,6 +512,20 @@ const getFaustAudioWorkletProcessor = <Poly extends boolean = false>(
           break;
         case "keyOff":
           this.keyOff(msg.data[0], msg.data[1], msg.data[2]);
+          break;
+        case "keyOnScheduled":
+          this.scheduledEvents.push({
+            type: "keyOn",
+            data: [msg.data[0], msg.data[1], msg.data[2]],
+            time: msg.data[3],
+          });
+          break;
+        case "keyOffScheduled":
+          this.scheduledEvents.push({
+            type: "keyOff",
+            data: [msg.data[0], msg.data[1], msg.data[2]],
+            time: msg.data[3],
+          });
           break;
         default:
           super.handleMessageAux(e);
